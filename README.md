@@ -1,0 +1,1 @@
+A base API Rest for another scalable projects with Django Rest Framework
