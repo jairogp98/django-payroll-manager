@@ -1,14 +1,15 @@
 from rest_framework.views import APIView, Response
 from apps.users.models import User
 from apps.users.api.serializers import UserSerializer
+from rest_framework import status
 
 class UserAPIView(APIView):
 
     def get(self, request):
 
-       users = User.objects.all()
+       users = User.objects.filter(is_active= True)
        users_serialized = UserSerializer(users, many = True)
-       return Response(users_serialized.data, 200)
+       return Response(users_serialized.data, status.HTTP_200_OK)
 
     def post(self, request):
 
@@ -16,27 +17,59 @@ class UserAPIView(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, 200)
+            return Response(serializer.data, status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors)
-
-    def put(self, request):
-        pass
 
 class UserAPIViewById(APIView):
 
     def get(self,request, pk):
 
         if pk is None:
-            return Response("You must specify user's id", 400)
+            return Response({"message": "You must specify user's id"}, status.HTTP_400_BAD_REQUEST)
         else:
             user = User.objects.filter(id = pk).first()
-            user_serialized = UserSerializer(user)
-
             if user is None:
-                return Response("User not found", 400)
+                return Response({"message": "User not found"}, status.HTTP_404_NOT_FOUND)
             else:
-                return Response(user_serialized.data, 200)
+                user_serialized = UserSerializer(user)
+                return Response(user_serialized.data, status.HTTP_200_OK)
 
+    def put (self, request, pk):
+        if pk is None:
+            return Response({"message": "You must specify user's id"}, status.HTTP_400_BAD_REQUEST)
+        else:
+            user = User.objects.filter(id = pk).first()
+            if user is None:
+                return Response({"message": "User not found"}, status.HTTP_404_NOT_FOUND)
+            else:
+                user_serialized = UserSerializer(user, data = request.data)
+                if user_serialized.is_valid():
+                    user_serialized.save()
+                    return Response(user_serialized.data, status.HTTP_200_OK)
+                else:
+                    return Response(user_serialized.errors)
 
-        
+    def patch(self, request, pk):
+        if pk is None:
+            return Response({"message": "You must specify user's id"}, status.HTTP_400_BAD_REQUEST)
+        else:
+            user = User.objects.filter(id = pk).first()
+            if user is None:
+                return Response({"message": "User not found"}, status.HTTP_404_NOT_FOUND)
+            else:
+                    user.set_password(request.data['password'])
+                    user.save()
+                    return Response({'message': 'Password succesfully changed!'}, status.HTTP_200_OK)
+
+    def delete(self, request, pk):
+        if pk is None:
+            return Response({'message':"You must specify user's id"}, status.HTTP_400_BAD_REQUEST)
+        else:
+            user = User.objects.filter(id = pk).first()
+            if user is None:
+                return Response({"message": "User not found"}, status.HTTP_404_NOT_FOUND)
+            else:
+                    user.is_active = False
+                    user.save()
+                    return Response({f'message': 'User {user.email} deactivated.'}, status.HTTP_200_OK)
