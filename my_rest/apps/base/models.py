@@ -4,9 +4,9 @@ class BaseModel(models.Model):
         """Base model parent for every future model"""
 
         id = models.AutoField(primary_key = True)
-        created_date = models.DateField('creation date', default = None, null = True)
-        modified_date = models.DateField('modification date', default = None, null = True)
-        deleted_date = models.DateField('delete date', default = None, null = True)
+        created_date = models.DateTimeField('creation date', default = None, null = True)
+        modified_date = models.DateTimeField('modification date', default = None, null = True)
+        deleted_date = models.DateTimeField('delete date', default = None, null = True)
 
         class Meta:
 
