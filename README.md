@@ -1,1 +1,3 @@
-A base API Rest for another scalable projects with Django Rest Framework
+A RESTful API which manages basic payroll and attendances for multiple companies.
+
+Developed in Django & Django REST Framework.
