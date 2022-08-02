@@ -25,7 +25,7 @@ class UserAPIView(APIView):
         except Exception as e:
                 return Response (f"ERROR: {e}", 500)
 
-class UserAPIViewById(APIView):
+class UserByIdAPIView(APIView):
 
     def get(self,request, pk):
         try:
