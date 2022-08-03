@@ -17,9 +17,14 @@ class UserCreateSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id','email', 'name', 'last_name']
+
+class UserChangePasswordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['password']
+
 
