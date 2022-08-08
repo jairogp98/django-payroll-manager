@@ -3,7 +3,9 @@ from apps.users.models import User
 from apps.users.api.serializers import UserListSerializer, UserCreateSerializer, UserUpdateSerializer, UserChangePasswordSerializer
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
-
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
+@permission_classes([IsAuthenticated])
 class UserAPIView(APIView):
 
     @swagger_auto_schema(responses={200: UserListSerializer(many=True)})
@@ -27,7 +29,7 @@ class UserAPIView(APIView):
                 return Response(serializer.errors)
         except Exception as e:
                 return Response (f"ERROR: {e}", 500)
-
+@permission_classes([IsAuthenticated])
 class UserByIdAPIView(APIView):
 
     @swagger_auto_schema(responses={200: UserListSerializer(many=True)})

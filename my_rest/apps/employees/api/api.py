@@ -2,9 +2,10 @@ from rest_framework.views import Response
 from apps.employees.api.serializers import EmployeeSerializer
 from rest_framework import status, viewsets
 from django.utils import timezone
-
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
+@permission_classes([IsAuthenticated])
 class EmployeeViewSet(viewsets.ModelViewSet):
-
     serializer_class = EmployeeSerializer
     
     def get_queryset(self, pk = None):
