@@ -1,15 +1,18 @@
 from rest_framework import serializers
 from apps.users.models import User
+from apps.companies.api.serializers import CompanySerializer
 
 class UserListSerializer(serializers.ModelSerializer):
+
+    company = CompanySerializer()
     class Meta:
         model = User
-        fields = ['id','email', 'name', 'last_name', 'last_login']
+        fields = ['id','email', 'name', 'last_name', 'last_login', 'company']
 
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['email', 'name', 'last_name', 'password']
+        fields = ['email', 'name', 'last_name', 'password', 'company']
 
     def create(self, validated_data):
         user = User(**validated_data)
@@ -20,7 +23,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','email', 'name', 'last_name']
+        fields = ['id','email', 'name', 'last_name', 'company']
 
 class UserChangePasswordSerializer(serializers.ModelSerializer):
     class Meta:

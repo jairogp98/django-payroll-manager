@@ -10,9 +10,10 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     serializer_class = EmployeeSerializer
     
     def get_queryset(self, pk = None):
+        company = self.request.user.company # I need to filter by the company of the user logged in, so the user is not able to access another company's data.
         if pk is None:
-            return self.get_serializer().Meta.model.objects.filter(deleted_date = None)
-        return self.get_serializer().Meta.model.objects.filter(id = pk, deleted_date = None).first()
+            return self.get_serializer().Meta.model.objects.filter(deleted_date = None, company = company)
+        return self.get_serializer().Meta.model.objects.filter(id = pk, deleted_date = None, company = company).first()
 
     def destroy(self, request, pk = None):
         """Personalized delete method bc the default viewset destroys the entire data. This is logical delete"""
