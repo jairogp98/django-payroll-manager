@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'simple_history', 
     'apps.users', 
     'apps.base',
-    'apps.employees'
+    'apps.employees',
+    'apps.companies'
 ]
 
 MIDDLEWARE = [

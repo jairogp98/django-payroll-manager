@@ -2,12 +2,16 @@ from django.db import models
 from apps.base.models import BaseModel
 from simple_history.models import HistoricalRecords
 from django.utils import timezone
+from apps.companies.models import Company
 
 class Employee (BaseModel):
     name = models.CharField('name', max_length = 255, blank = False, null =False)
     last_name = models.CharField('lastname', max_length = 255, blank = False, null =False)
     email = models.EmailField('mail', max_length = 255, unique = True)
     dob = models.DateField('date of birth', default = None, null = False)
+    company = models.ForeignKey(Company, on_delete= models.CASCADE, verbose_name = 'company', default = None)
+    salary_per_hour = models.FloatField('salary', max_length = 255, null = False, default = None)
+    role = models.CharField('role', max_length = 255, null =True)
 
     historical = HistoricalRecords()
 
