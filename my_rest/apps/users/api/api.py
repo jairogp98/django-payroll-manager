@@ -15,7 +15,7 @@ class UserAPIView(APIView):
             users_serialized = UserListSerializer(users, many = True)
             return Response(users_serialized.data, status.HTTP_200_OK)
         except Exception as e:
-                return Response (f"ERROR: {e}", 500)
+                return Response (f"ERROR: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @swagger_auto_schema(responses={200: UserListSerializer(many=True)}, request_body=UserCreateSerializer)
     def post(self, request):
@@ -28,7 +28,7 @@ class UserAPIView(APIView):
             else:
                 return Response(serializer.errors)
         except Exception as e:
-                return Response (f"ERROR: {e}", 500)
+                return Response (f"ERROR: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
 @permission_classes([IsAuthenticated])
 class UserByIdAPIView(APIView):
 
@@ -45,7 +45,7 @@ class UserByIdAPIView(APIView):
                     user_serialized = UserListSerializer(user)
                     return Response(user_serialized.data, status.HTTP_200_OK)
         except Exception as e:
-                return Response (f"ERROR: {e}", 500)
+                return Response (f"ERROR: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @swagger_auto_schema(responses={200: UserListSerializer(many=True)}, request_body=UserUpdateSerializer)
     def put (self, request, pk:int):
@@ -67,7 +67,7 @@ class UserByIdAPIView(APIView):
                     else:
                         return Response(user_serialized.errors)
         except Exception as e:
-            return Response (f"ERROR: {e}", 500)
+            return Response (f"ERROR: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @swagger_auto_schema(responses={200: "Password succesfully updated!"}, request_body= UserChangePasswordSerializer)
     def patch(self, request, pk:int):
@@ -88,7 +88,7 @@ class UserByIdAPIView(APIView):
                         else:
                             return Response(password_serialized.errors)
         except Exception as e:
-                return Response (f"ERROR: {e}", 500)
+                return Response (f"ERROR: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @swagger_auto_schema(responses={200: "User -user- deactivated."})
     def delete(self, request, pk:int):
@@ -104,4 +104,4 @@ class UserByIdAPIView(APIView):
                         user.save()
                         return Response({f'message': 'User {user.email} deactivated.'}, status.HTTP_200_OK)
         except Exception as e:
-                return Response (f"ERROR: {e}", 500)
+                return Response (f"ERROR: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
