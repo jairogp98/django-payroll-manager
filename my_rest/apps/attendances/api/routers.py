@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from apps.attendances.api.api import AttendanceViewSet, AttendanceByEmployeeAPIView
+from apps.attendances.api.api import AttendanceViewSet
 
 router = DefaultRouter()
 

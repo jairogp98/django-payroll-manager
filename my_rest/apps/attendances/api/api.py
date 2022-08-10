@@ -1,28 +1,50 @@
 from rest_framework.views import Response, APIView
 from apps.attendances.api.serializers import AttendanceSerializer, AttendanceUpdateSerializer
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from drf_yasg.utils import swagger_auto_schema
 from apps.attendances.models import Attendance
 from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
+import coreapi
 
+class SimpleFilterBackend(DjangoFilterBackend): #Making schemas for Swagger
+    def get_schema_fields(self, view):
+        return [
+            coreapi.Field(
+            name='date',
+            location='query',
+            required=False,
+            type='string'),
+            coreapi.Field(
+            name='employee_id',
+            location='query',
+            required=False,
+            type='integer'),
+            coreapi.Field(
+            name='employee__company',
+            location='query',
+            required=True,
+            type='integer'),
+        ] 
+        
 @permission_classes([IsAuthenticated])
 class AttendanceViewSet(viewsets.ModelViewSet):
     serializer_class = AttendanceSerializer
-    
+    filter_backends = [SimpleFilterBackend]
+    filterset_fields = ['date','employee_id', 'employee__company']
+
     def get_queryset(self, pk = None):
-        company = self.request.user.company # I need to filter by the company of the user logged in, so the user is not able to access another company's data.
         if pk is None:
-            return self.get_serializer().Meta.model.objects.filter(employee__company= company)
-        return self.get_serializer().Meta.model.objects.filter(id = pk, employee__company= company).first() # Getting pk as employee_id
+            return self.get_serializer().Meta.model.objects.all()
+        return self.get_serializer().Meta.model.objects.filter(id = pk).first() # Getting pk as employee_id
 
     def create(self, request):
-
-        #Checking if the employee has an open attendance first
+        """Creating attendance"""
         try:
             query = self.get_serializer().Meta.model.objects.filter(employee_id = request.data['employee'], exit_time__isnull = True).first()
-            if not query:
+            if not query: #Checking if the employee has an open attendance first
                 attendance_serialized = self.get_serializer(data =request.data)
 
                 if attendance_serialized.is_valid():
@@ -37,38 +59,16 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response (f"ERROR: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-@permission_classes([IsAuthenticated])
-class AttendanceByEmployeeAPIView(APIView):
-
-    @swagger_auto_schema(responses={200: AttendanceSerializer(many=True)})
-    def get(self,request, id:int):
-        """Getting employee's attendances"""
-        try:
-            company = request.user.company
-            if id is None:
-                return Response({"message": "You must specify employee's id"}, status.HTTP_400_BAD_REQUEST)
-            else:
-                attendances = Attendance.objects.filter(employee_id = id, employee__company= company).all()
-                if attendances is None:
-                    return Response({"message": "No attendances found for this employee"}, status.HTTP_404_NOT_FOUND)
-                else:
-                    attendances_serialized = AttendanceSerializer(attendances, many = True)
-                    return Response(attendances_serialized.data, status.HTTP_200_OK)
-        except Exception as e:
-                return Response (f"ERROR: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
     @swagger_auto_schema(responses={200: AttendanceSerializer(many=True)}, request_body=AttendanceUpdateSerializer)
-    def put (self, request, id:int):
+    def update(self, request, pk):
         """Closing employee's attendance"""
         try:
-            company = request.user.company
-            if id is None:
-                return Response({"message": "You must specify employee's id"}, status.HTTP_400_BAD_REQUEST)
+            if pk is None:
+                return Response({"message": "You must specify attendance's id"}, status.HTTP_400_BAD_REQUEST)
             else:
-                attendance = Attendance.objects.filter(employee_id = id, employee__company= company, date = request.data['date'], exit_time__isnull = True).first()
+                attendance = self.get_serializer().Meta.model.objects.filter(id = pk, exit_time__isnull = True).first()
                 if attendance is None:
-                    return Response({"message": "No attendances found for this employee"}, status.HTTP_404_NOT_FOUND)
+                    return Response({"message": "The attendance is already closed or doesn't exist"}, status.HTTP_404_NOT_FOUND)
                 else:
                     attendance_serialized = AttendanceUpdateSerializer(attendance, data = request.data)
                     if attendance_serialized.is_valid():
@@ -84,4 +84,4 @@ class AttendanceByEmployeeAPIView(APIView):
                     else:
                         return Response(attendance_serialized.errors)
         except Exception as e:
-            return Response (f"ERROR: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)        
+            return Response (f"ERROR: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
