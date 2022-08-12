@@ -46,6 +46,7 @@ urlpatterns = [
     path('api/', include('apps.employees.api.routers')),
     path('api/', include('apps.companies.api.routers')),
     path('api/', include('apps.attendances.api.routers')),
+    path('api/', include('apps.payroll.api.routers')),
     path('api/token/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/logout/', TokenBlacklistView.as_view(), name='token_blacklist'),

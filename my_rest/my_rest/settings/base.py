@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'apps.base',
     'apps.employees',
     'apps.companies',
-    'apps.attendances'
+    'apps.attendances',
+    'apps.payroll'
 ]
 
 MIDDLEWARE = [
@@ -68,7 +69,12 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        'drf_excel.renderers.XLSXRenderer',
+    ),
 }
 
 SIMPLE_JWT = {

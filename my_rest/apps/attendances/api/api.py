@@ -38,7 +38,7 @@ class AttendanceViewSet(viewsets.ModelViewSet):
     def get_queryset(self, pk = None):
         if pk is None:
             return self.get_serializer().Meta.model.objects.all()
-        return self.get_serializer().Meta.model.objects.filter(id = pk).first() # Getting pk as employee_id
+        return self.get_serializer().Meta.model.objects.filter(id = pk).first()
 
     def create(self, request):
         """Creating attendance"""
