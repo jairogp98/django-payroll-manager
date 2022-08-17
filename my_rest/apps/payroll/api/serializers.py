@@ -1,17 +1,43 @@
 from rest_framework import serializers
 from apps.attendances.models import Attendance
-from apps.employees.api.serializers import EmployeeSerializer
+class PayrollSerializer(serializers.Serializer):
 
-class PayrollFilterSerializer(serializers.Serializer):
-    date = serializers.DateTimeField(required = False)
-    company = serializers.IntegerField(required = False)
-    employee = serializers.IntegerField(required = False)
+    company = serializers.SerializerMethodField('_company')
+    employee = serializers.SerializerMethodField('_employee')
+    role = serializers.SerializerMethodField('_role')
+    date = serializers.SerializerMethodField('_date')
+    attendance = serializers.SerializerMethodField('_attendance')
+    hours_worked = serializers.SerializerMethodField('_hours_worked')
 
-class PayrollOutputSerializer(serializers.ModelSerializer):
+    def _company(self, obj):
+        employee= getattr(obj, 'employee')
+        company = employee.company
+        comany = company.name
+        return company
+
+    def _employee(self, obj):
+        employee= getattr(obj, 'employee')
+        return employee.name
     
-    employee = EmployeeSerializer()
+    def _role(self, obj):
+        employee= getattr(obj, 'employee')
+        return employee.role
 
+    def _date(self, obj):
+        date = getattr(obj, 'date')
+        return date
+
+    def _attendance(self,obj):
+        entrance = getattr(obj, 'entrance_time')
+        entrance = entrance.time().strftime("%H:%M:%S")
+        exit = getattr(obj, 'exit_time')
+        exit = exit.time().strftime("%H:%M:%S")
+        data = f"Entrance: {entrance}\nExit: {exit}"
+        return data
+    
+    def _hours_worked(self, obj):
+        hours = getattr(obj, 'hours_worked')
+        return hours
     class Meta:
         model = Attendance
-        fields = '__all__'
-    #file = serializers.FileField(allow_empty_file=True)
+        fields = ['company', 'employee', 'role', 'date', 'attendance', 'hours_worked']

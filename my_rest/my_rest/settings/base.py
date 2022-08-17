@@ -77,6 +77,9 @@ REST_FRAMEWORK = {
     ),
 }
 
+DRF_EXCEL_INTEGER_FORMAT = '0%'
+DRF_EXCEL_DECIMAL_FORMAT = '0.00E+00'
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
