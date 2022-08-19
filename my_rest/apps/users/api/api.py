@@ -26,7 +26,7 @@ class UserAPIView(APIView):
                 serializer.save()
                 return Response(serializer.data, status.HTTP_201_CREATED)
             else:
-                return Response(serializer.errors)
+                return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
         except Exception as e:
                 return Response (f"ERROR: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
 @permission_classes([IsAuthenticated])
@@ -65,7 +65,7 @@ class UserByIdAPIView(APIView):
                         user_updated = UserListSerializer(user_updated)
                         return Response(user_updated.data, status.HTTP_200_OK)
                     else:
-                        return Response(user_serialized.errors)
+                        return Response(user_serialized.errors, status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response (f"ERROR: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -86,7 +86,7 @@ class UserByIdAPIView(APIView):
                             user.save()
                             return Response({'message': 'Password succesfully updated!'}, status.HTTP_200_OK)
                         else:
-                            return Response(password_serialized.errors)
+                            return Response(password_serialized.errors, status.HTTP_400_BAD_REQUEST)
         except Exception as e:
                 return Response (f"ERROR: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
 
