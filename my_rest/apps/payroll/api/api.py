@@ -1,4 +1,5 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.views import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from django_filters.rest_framework import DjangoFilterBackend
@@ -18,7 +19,7 @@ class SimpleFilterBackend(DjangoFilterBackend): #Making schemas for Swagger
             name='month',
             location='query',
             required=True,
-            type='datetime'),
+            type='date'),
             coreapi.Field(
             name='employee__company',
             location='query',
@@ -31,7 +32,7 @@ class SimpleFilterBackend(DjangoFilterBackend): #Making schemas for Swagger
             type='integer'),
         ]
 
-@permission_classes([IsAuthenticated])
+#@permission_classes([IsAuthenticated])
 class PayrollViewSet (XLSXFileMixin,viewsets.ReadOnlyModelViewSet):
 
     serializer_class = PayrollSerializer
@@ -109,7 +110,10 @@ class PayrollViewSet (XLSXFileMixin,viewsets.ReadOnlyModelViewSet):
     def get_filename(self, request): # Defining the name of the file generated
         if self.request.GET.get('employee_id'):
             employee = Employee.objects.filter(id = self.request.GET.get('employee_id')).first()
-            name = f"{employee.name}{employee.last_name}_payroll.xlsx"
+            if employee:
+                name = f"{employee.name}{employee.last_name}_payroll.xlsx"
+            else:
+                name = 'payroll.xlsx'
         else:
             name = 'payroll.xlsx'
             
@@ -118,7 +122,7 @@ class PayrollViewSet (XLSXFileMixin,viewsets.ReadOnlyModelViewSet):
     def get_dateFilter(self, month): # This funcion gets the range of dates that i need for the month filtering in the queryset ex: 2022-01-01, 2022-01-31
         initial_month = month
         if initial_month:
-            initial_month = datetime.strptime(initial_month, '%Y-%m-%d %H:%M:%S.%f')
+            initial_month = datetime.strptime(initial_month, '%Y-%m-%d')
             year = initial_month.year
             month = initial_month.month
             day = initial_month.day

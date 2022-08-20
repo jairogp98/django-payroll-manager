@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from apps.attendances.models import Attendance
+from rest_framework.views import Response
 class PayrollSerializer(serializers.Serializer):
 
     company = serializers.SerializerMethodField('_company')
@@ -14,6 +15,7 @@ class PayrollSerializer(serializers.Serializer):
         company = employee.company
         comany = company.name
         return company
+
 
     def _employee(self, obj):
         employee= getattr(obj, 'employee')

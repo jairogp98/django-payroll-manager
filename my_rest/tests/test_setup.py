@@ -7,7 +7,6 @@ class TestSetUp(APITestCase):
 
     def setUp(self):
 
-        self.login_url = '/api/token/login/'
         self.company = CompanyFactory.create_company()
         self.user = User.objects.create_superuser(
             name = "Unit",
@@ -17,6 +16,7 @@ class TestSetUp(APITestCase):
             company = self.company
         )
 
+        self.login_url = '/api/token/login/'
         response = self.client.post(
             self.login_url,
             {

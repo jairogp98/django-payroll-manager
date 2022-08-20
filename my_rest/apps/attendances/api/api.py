@@ -1,5 +1,5 @@
 from rest_framework.views import Response, APIView
-from apps.attendances.api.serializers import AttendanceSerializer, AttendanceUpdateSerializer
+from apps.attendances.api.serializers import AttendanceSerializer, AttendanceUpdateSerializer, AttendanceCreateSerializer
 from rest_framework import viewsets, status, filters
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
@@ -45,13 +45,12 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         try:
             query = self.get_serializer().Meta.model.objects.filter(employee_id = request.data['employee'], exit_time__isnull = True).first()
             if not query: #Checking if the employee has an open attendance first
-                attendance_serialized = self.get_serializer(data =request.data)
-
+                attendance_serialized = AttendanceCreateSerializer(data =request.data)
                 if attendance_serialized.is_valid():
                     attendance_serialized.save()
                     return Response(attendance_serialized.data, status.HTTP_201_CREATED)
                 else:
-                    return Response(attendance_serialized.errors)
+                    return Response(attendance_serialized.errors, status.HTTP_400_BAD_REQUEST)
                 
             else:
                 return Response({"message": f"This employee has an open attendance at {query.entrance_time}"}, status.HTTP_400_BAD_REQUEST)
@@ -82,6 +81,9 @@ class AttendanceViewSet(viewsets.ModelViewSet):
                         attendance_updated = AttendanceSerializer(attendance)
                         return Response(attendance_updated.data, status.HTTP_200_OK)
                     else:
-                        return Response(attendance_serialized.errors)
+                        return Response(attendance_serialized.errors, status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response (f"ERROR: {e}", status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def partial_update(self, request, pk):
+        return Response("message: This method is not currently in use", status.HTTP_200_OK)

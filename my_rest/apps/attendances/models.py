@@ -3,7 +3,7 @@ from django.db import models
 from simple_history.models import HistoricalRecords
 from apps.employees.models import Employee
 
-class Attendance (models.Model):
+class Attendance(models.Model):
 
     id = models.AutoField(primary_key = True)
     employee = models.ForeignKey(Employee, on_delete = models.CASCADE, verbose_name = 'employee', null = False)
