@@ -116,14 +116,6 @@ class AttendancesTestcase(TestSetUp):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_patch_attendance(self):
-
-        attendance= AttendanceFactory.create_attendance()
-        response = self.client.patch(f'/api/attendance/{attendance.id}/'
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
     def test_delete_attendance(self):
 
         attendance= AttendanceFactory.create_attendance()
@@ -134,7 +126,6 @@ class AttendancesTestcase(TestSetUp):
 
     def test_delete_attendance_not_found(self):
 
-        response = self.client.delete('/api/attendance/0/'
-        )
+        response = self.client.delete('/api/attendance/0/')
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

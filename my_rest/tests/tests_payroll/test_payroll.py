@@ -12,14 +12,13 @@ class PayrollTestcase(TestSetUp):
         employee = attendance.employee
         company = employee.company.id
         
-        response_close = self.client.put(f'api/attendance/{attendance.id}', #Closing the attendance before testing the payroll report
+        response_close = self.client.put(f'/api/attendance/{attendance.id}/', #Closing the attendance before testing the payroll report
             {
                 "date": date
             })
-
+        
         if (response_close.status_code == status.HTTP_200_OK):
             response = self.client.get(f'/api/payroll/?month={date}&employee__company={company}&employee_id={employee.id}')
-            
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_payroll_bad_request(self):

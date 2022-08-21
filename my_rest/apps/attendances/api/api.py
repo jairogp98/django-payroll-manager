@@ -40,6 +40,7 @@ class AttendanceViewSet(viewsets.ModelViewSet):
             return self.get_serializer().Meta.model.objects.all()
         return self.get_serializer().Meta.model.objects.filter(id = pk).first()
 
+    @swagger_auto_schema(responses={200: AttendanceSerializer(many=True)}, request_body=AttendanceCreateSerializer)
     def create(self, request):
         """Creating attendance"""
         try:

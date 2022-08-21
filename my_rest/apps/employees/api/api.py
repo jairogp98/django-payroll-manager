@@ -25,11 +25,14 @@ class SimpleFilterBackend(DjangoFilterBackend): #Making schemas for Swagger
 class EmployeeViewSet(viewsets.ModelViewSet):
     serializer_class = EmployeeSerializer
     filter_backends = [SimpleFilterBackend]
-    filterset_fields = ['company_id', 'role'] # I need to filter by the company of the user logged in, so the user is not able to access another company's data.
+    filterset_fields = ['company_id']
 
     def get_queryset(self, pk = None):
         if pk is None:
-            return self.get_serializer().Meta.model.objects.filter(deleted_date = None)
+            if self.request.GET.get('role'): # If the filter role is recieved
+                return self.get_serializer().Meta.model.objects.filter(deleted_date = None, role__icontains=self.request.GET.get('role'))
+            else:
+                return self.get_serializer().Meta.model.objects.filter(deleted_date = None)
         return self.get_serializer().Meta.model.objects.filter(id = pk, deleted_date = None).first()
 
     def destroy(self, request, pk = None):

@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from apps.attendances.models import Attendance
 from rest_framework.views import Response
-class PayrollSerializer(serializers.Serializer):
+class PayrollSerializer(serializers.Serializer): 
+    """This serializer is used to generate the fields and data of the payroll report"""
 
     company = serializers.SerializerMethodField('_company')
     employee = serializers.SerializerMethodField('_employee')
@@ -19,7 +20,9 @@ class PayrollSerializer(serializers.Serializer):
 
     def _employee(self, obj):
         employee= getattr(obj, 'employee')
-        return employee.name
+        employee_name = employee.name
+        employee_last_name = employee.last_name
+        return f"{employee_name} {employee_last_name}"
     
     def _role(self, obj):
         employee= getattr(obj, 'employee')

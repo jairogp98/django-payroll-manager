@@ -63,7 +63,7 @@ MIDDLEWARE = [
     'simple_history.middleware.HistoryRequestMiddleware'
 ]
 
-""" Django Simple-JWT auth configuration"""
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -79,6 +79,8 @@ REST_FRAMEWORK = {
 
 DRF_EXCEL_INTEGER_FORMAT = '0%'
 DRF_EXCEL_DECIMAL_FORMAT = '0.00E+00'
+
+""" Django Simple-JWT auth configuration"""
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),

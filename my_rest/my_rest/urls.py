@@ -28,7 +28,7 @@ schema_view = get_schema_view(
    openapi.Info(
       title="Payroll API",
       default_version='v1',
-      description="A basic API RESTful for payroll and employee management.",
+      description="An API RESTful for payroll and employee management.\n Please for authentication use the EP /token/login/ and the credentials: email: test@test.com, password: test",
       terms_of_service="https://www.google.com/policies/terms/",
       contact=openapi.Contact(email="gomezjairo14@gmail.com"),
       license=openapi.License(name="BSD License"),

@@ -34,7 +34,7 @@ class SimpleFilterBackend(DjangoFilterBackend): #Making schemas for Swagger
 
 #@permission_classes([IsAuthenticated])
 class PayrollViewSet (XLSXFileMixin,viewsets.ReadOnlyModelViewSet):
-
+    """Obtain the payroll report for an specific month. To test it, use this parameters: month=2022-08-01, employee__company=1, employee_id=1"""
     serializer_class = PayrollSerializer
     filter_backends = [SimpleFilterBackend]
     filterset_fields = ['employee__company','employee_id']
